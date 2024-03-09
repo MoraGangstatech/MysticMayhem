@@ -25,9 +25,11 @@ public abstract class Character implements Serializable {
     private int baseSpeed;
     private Equipment armour;
     private Equipment artefact;
+    private int attackPriority;
+    private int defendPriority;
 
 
-    public Character(Player owner, String name, Category category, double price, int baseAttack, int baseDefense, double baseHealth, int baseSpeed) {
+    public Character(Player owner, String name, Category category, double price, int baseAttack, int baseDefense, double baseHealth, int baseSpeed, int attackPriority, int defendPriority) {
         this.owner = owner;
         this.name = name;
         this.category = category;
@@ -36,6 +38,8 @@ public abstract class Character implements Serializable {
         this.baseDefense = baseDefense;
         this.baseHealth = baseHealth;
         this.baseSpeed = baseSpeed;
+        this.attackPriority = attackPriority;
+        this.defendPriority = defendPriority;
         currentHealth = baseHealth;
         previousHealth = baseHealth;
         armour = null;
@@ -171,6 +175,14 @@ public abstract class Character implements Serializable {
             this.baseSpeed -= artefact.getSpeedModifier();
             this.artefact = null;
         }
+    }
+
+    public int getAttackPriority() {
+        return attackPriority;
+    }
+
+    public int getDefendPriority() {
+        return defendPriority;
     }
 
     public double additionalTurnDamageMultiplier(HomeGround ground) {
