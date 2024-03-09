@@ -51,13 +51,37 @@ public abstract class Character implements Serializable {
     }
 
     public int getAttack(HomeGround ground) {
-        // TODO: implement getAttack based on the ground and category
-        throw new NotImplementedException();
+        int attack = baseAttack;
+        if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
+            attack += 1;
+        }
+        else if (category == Category.Sunchildren && ground == HomeGround.Marshland) {
+            attack -= 1;
+        }
+        else if (category == Category.Sunchildren && ground == HomeGround.Desert) {
+            attack += 1;
+        }
+        else if (category == Category.Mystics && ground == HomeGround.Arcane) {
+            attack += 2;
+        }
+        return attack;
     }
 
     public int getDefense(HomeGround ground) {
-        // TODO: implement getDefense based on the ground and category
-        throw new NotImplementedException();
+        int defense = baseDefense;
+        if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
+            defense += 1;
+        }
+        else if (category == Category.Marshlanders && ground == HomeGround.Marshland) {
+            defense += 2;
+        }
+        else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
+            defense -= 1;
+        }
+        else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
+            defense -= 1;
+        }
+        return defense;
     }
 
     public double getCurrentHealth() {
@@ -74,8 +98,23 @@ public abstract class Character implements Serializable {
     }
 
     public int getSpeed(HomeGround ground) {
-        // TODO: implement getSpeed based on the ground and category
-        throw new NotImplementedException();
+        int speed = baseSpeed;
+        if (category == Category.Marshlanders && ground == HomeGround.Hillcrest) {
+            speed -= 1;
+        }
+        else if (category == Category.Sunchildren && ground == HomeGround.Hillcrest) {
+            speed -= 1;
+        }
+        else if (category == Category.Mystics && ground == HomeGround.Marshland) {
+            speed -= 1;
+        }
+        else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
+            speed -= 1;
+        }
+        else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
+            speed -= 1;
+        }
+        return speed;
     }
 
     public Equipment getArmour() {
@@ -96,8 +135,14 @@ public abstract class Character implements Serializable {
     }
 
     public void discardArmour() {
-        // TODO: implement discardArmour
-        throw new NotImplementedException();
+        if (armour != null) {
+            this.price -= armour.getPrice() * (0.2);
+            this.baseAttack -= armour.getAttackModifier();
+            this.baseDefense -= armour.getDefenseModifier();
+            this.baseHealth -= armour.getHealthModifier();
+            this.baseSpeed -= armour.getSpeedModifier();
+            this.armour = null;
+        }
     }
 
     public Equipment getArtefact() {
@@ -118,8 +163,14 @@ public abstract class Character implements Serializable {
     }
 
     public void discardArtefact() {
-        // TODO: implement discardArtefact
-        throw new NotImplementedException();
+        if (artefact != null) {
+            this.price -= artefact.getPrice() * (0.2);
+            this.baseAttack -= artefact.getAttackModifier();
+            this.baseDefense -= artefact.getDefenseModifier();
+            this.baseHealth -= artefact.getHealthModifier();
+            this.baseSpeed -= artefact.getSpeedModifier();
+            this.artefact = null;
+        }
     }
 
     public double additionalTurnDamageMultiplier(HomeGround ground) {
