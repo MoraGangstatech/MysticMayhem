@@ -17,6 +17,7 @@ public class Player implements Serializable {
     private String name;
     private int xp;
     private double goldCoins;
+    private HomeGround homeGround;
 
     public Player(String name, String username) {
         this.userID = nextUserID++;
@@ -57,6 +58,14 @@ public class Player implements Serializable {
 
     public Army getArmy() {
         return army;
+    }
+
+    public HomeGround getHomeGround() {
+        return homeGround;
+    }
+
+    public void setHomeGround(HomeGround ground) {
+        this.homeGround = ground;
     }
 
     public void buyCharacter(Character character) {
