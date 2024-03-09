@@ -1,6 +1,5 @@
 package game;
 
-import exeptions.NotImplementedException;
 import game.characters.Character;
 import game.exeptions.InvalidCharacterException;
 
@@ -40,25 +39,27 @@ public class Army implements Serializable {
 
     }
 
-    public Character getHighestSpeedCharacter(HomeGround ground) {
-        Character highestSpeedCharacter = characters.get(0);
+    public Character getAttacker(HomeGround ground) {
+        Character attacker = characters.get(0);
         for (Character character : characters) {
-            if (character.getSpeed(ground) > highestSpeedCharacter.getSpeed(ground)) {
-                highestSpeedCharacter = character;
+            if (character.getSpeed(ground) >= attacker.getSpeed(ground)) {
+                if (character.getAttackPriority() < attacker.getAttackPriority()) continue;
+                attacker = character;
             }
         }
-        return highestSpeedCharacter;
+        return attacker;
 
     }
 
-    public Character getLowestDefenceCharacter(HomeGround ground) {
-        Character lowestDefenceCharacter = characters.get(0);
+    public Character getDefender(HomeGround ground) {
+        Character defender = characters.get(0);
         for (Character character : characters) {
-            if (character.getDefense(ground) < lowestDefenceCharacter.getDefense(ground)) {
-                lowestDefenceCharacter = character;
+            if (character.getDefense(ground) <= defender.getDefense(ground)) {
+                if (character.getDefendPriority() < defender.getDefendPriority()) continue;
+                defender = character;
             }
         }
-        return lowestDefenceCharacter;
+        return defender;
     }
 
     public Character getLowestHealthCharacter(HomeGround ground) {
@@ -72,7 +73,7 @@ public class Army implements Serializable {
     }
 
     public ArrayList<BattleRecord> battle(Army enemyArmy, HomeGround ground) {
-        return getHighestSpeedCharacter(ground).engage(this, enemyArmy, ground);
+        return getAttacker(ground).engage(this, enemyArmy, ground);
     }
 
     public void restore() {
