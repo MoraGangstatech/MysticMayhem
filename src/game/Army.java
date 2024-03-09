@@ -2,6 +2,7 @@ package game;
 
 import exeptions.NotImplementedException;
 import game.characters.Character;
+import game.exeptions.InvalidCharacterException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,29 +21,54 @@ public class Army implements Serializable {
     }
 
     public void insertCharacter(Character character) {
-        // TODO: implement insertCharacter. throw InvalidCharacterException if the character already in the army
-        // Change the owner of the character
-        throw new NotImplementedException();
+        if (characters.contains(character)) {
+            throw new InvalidCharacterException();
+        }
+        else{
+            characters.add(character);
+        }
+
     }
 
     public void removeCharacter(Character character) {
-        // TODO: implement removeCharacter. throw InvalidCharacterException if the character not in the army
-        throw new NotImplementedException();
+        if (!characters.contains(character)) {
+            throw new InvalidCharacterException();
+        }
+        else{
+            characters.remove(character);
+        }
+
     }
 
     public Character getHighestSpeedCharacter(HomeGround ground) {
-        // TODO: implement getHighestSpeedCharacter
-        throw new NotImplementedException();
+        Character highestSpeedCharacter = characters.get(0);
+        for (Character character : characters) {
+            if (character.getSpeed(ground) > highestSpeedCharacter.getSpeed(ground)) {
+                highestSpeedCharacter = character;
+            }
+        }
+        return highestSpeedCharacter;
+
     }
 
     public Character getLowestDefenceCharacter(HomeGround ground) {
-        // TODO: implement getLowestDefenceCharacter
-        throw new NotImplementedException();
+        Character lowestDefenceCharacter = characters.get(0);
+        for (Character character : characters) {
+            if (character.getDefense(ground) < lowestDefenceCharacter.getDefense(ground)) {
+                lowestDefenceCharacter = character;
+            }
+        }
+        return lowestDefenceCharacter;
     }
 
     public Character getLowestHealthCharacter(HomeGround ground) {
-        // TODO: implement getLowestHealthCharacter
-        throw new NotImplementedException();
+        Character lowestHealthCharacter = characters.get(0);
+        for (Character character : characters) {
+            if (character.getCurrentHealth() < lowestHealthCharacter.getCurrentHealth()) {
+                lowestHealthCharacter = character;
+            }
+        }
+        return lowestHealthCharacter;
     }
 
     public ArrayList<BattleRecord> battle(Army enemyArmy, HomeGround ground) {
@@ -50,7 +76,9 @@ public class Army implements Serializable {
     }
 
     public void restore() {
-        // TODO: implement restore for Army. call restore for every character
-        throw new NotImplementedException();
+        for (Character character : characters) {
+            character.restore();
+        }
+
     }
 }
