@@ -90,10 +90,30 @@ public class Cli {
     }
 
     private void profile() {
-        // TODO: implement profile
-        // Allows players to change their in-game name, etc.
-        // Directly update using player methods
-        throw new NotImplementedException();
+        if (game.getActivePlayer() == null) {
+            System.out.println("Please log in first.");
+            return;
+        }
+
+        System.out.println("Player Profile:");
+        System.out.println("Name: " + game.getActivePlayer().getName());
+        System.out.println("Username: " + game.getActivePlayer().getUsername());
+        System.out.println("GoldCoins: " + game.getActivePlayer().getGoldCoins());
+        System.out.println("Xp: " + game.getActivePlayer().getXp());
+//        System.out.println("Army: " + game.getActivePlayer().getArmy());
+
+        System.out.print("Do you want to change your name? (y/n): ");
+        Scanner scanner = new Scanner(System.in);
+        String response = scanner.nextLine().trim().toLowerCase();
+
+        if (response.equals("y")) {
+            System.out.print("Enter a new name: ");
+            String newName = scanner.nextLine().trim();
+            game.getActivePlayer().setName(newName);
+            System.out.println("Name updated successfully!");
+        } else {
+            System.out.println("No changes made to the profile.");
+        }
     }
 
     private void prepare() {

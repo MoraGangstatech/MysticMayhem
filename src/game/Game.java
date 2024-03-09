@@ -31,8 +31,12 @@ public class Game {
     }
 
     public void addNewPlayer(Player player) {
-        // TODO: implement addNewPlayer. Throw an exception if the player is a duplicate
-        throw new NotImplementedException();
+        if (players.stream().anyMatch(p -> p.getUsername() == player.getUsername())) {
+            throw new RuntimeException("Player with the same username already exists.");
+        }
+        else {
+            players.add(player);
+        }
     }
 
     public ArrayList<BattleRecord> battle() {
