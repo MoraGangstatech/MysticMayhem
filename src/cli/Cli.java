@@ -1,175 +1,66 @@
 package cli;
 
-import exeptions.NotImplementedException;
+import cli.functions.Battle;
+import cli.functions.Login;
+import cli.functions.Logoff;
+import cli.functions.Profile;
+import cli.functions.prepare.BuyCharacter;
+import cli.functions.prepare.BuyEquipment;
+import cli.functions.prepare.SellCharacter;
+import cli.functions.prepare.SellEquipment;
 import game.Game;
 import game.Player;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 public class Cli {
-    private Game game;
-    private final Map<Integer, String> commands;
     private final String playersFile = "players.ser";
 
     public Cli() {
-        commands = new HashMap<>();
-        commands.put(1, "login");
-        commands.put(2, "exit");
     }
 
     public void begin() {
-        game = new Game(retrievePlayers());
-        boolean exit = false;
-        while (!exit) {
-            switch (getCommand()) {
-                case "login":
-                    login();
-                    break;
-                case "battle":
-                    battle();
-                    break;
-                case "logoff":
-                    logoff();
-                    break;
-                case "prepare":
-                    prepare();
-                    break;
-                case "profile":
-                    profile();
-                    break;
-                case "exit":
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("Invalid command!");
-            }
-        }
+        String banner = """
+                            
+                █   __    __     __  __     ______     ______   __     ______                      █
+                █  /\\ "-./  \\   /\\ \\_\\ \\   /\\  ___\\   /\\__  _\\ /\\ \\   /\\  ___\\                     █
+                █  \\ \\ \\-./\\ \\  \\ \\____ \\  \\ \\___  \\  \\/_/\\ \\/ \\ \\ \\  \\ \\ \\____                    █
+                █   \\ \\_\\ \\ \\_\\  \\/\\_____\\  \\/\\_____\\    \\ \\_\\  \\ \\_\\  \\ \\_____\\                   █
+                █    \\/_/  \\/_/   \\/_____/   \\/_____/     \\/_/   \\/_/   \\/_____/                   █
+                █                                                                                  █
+                █            __    __     ______     __  __     __  __     ______     __    __     █
+                █           /\\ "-./  \\   /\\  __ \\   /\\ \\_\\ \\   /\\ \\_\\ \\   /\\  ___\\   /\\ "-./  \\    █
+                █           \\ \\ \\-./\\ \\  \\ \\  __ \\  \\ \\____ \\  \\ \\  __ \\  \\ \\  __\\   \\ \\ \\-./\\ \\   █
+                █            \\ \\_\\ \\ \\_\\  \\ \\_\\ \\_\\  \\/\\_____\\  \\ \\_\\ \\_\\  \\ \\_____\\  \\ \\_\\ \\ \\_\\  █
+                █             \\/_/  \\/_/   \\/_/\\/_/   \\/_____/   \\/_/\\/_/   \\/_____/   \\/_/  \\/_/  █
+                █                                                                                  █
+                """;
+        System.out.println(banner);
+        Game game = new Game(retrievePlayers());
+        CliMenu mainMenu = new CliMenu(
+                "Main",
+                new CliFunction[]{
+                        new Login()
+                },
+                new CliFunction[]{
+                        new Profile(),
+                        new CliMenu(
+                                "Prepare",
+                                new CliFunction[]{},
+                                new CliFunction[]{
+                                        new BuyCharacter(),
+                                        new SellCharacter(),
+                                        new BuyEquipment(),
+                                        new SellEquipment()
+                                }
+                        ),
+                        new Battle(),
+                        new Logoff()
+                });
+        mainMenu.call(game);
         storePlayers(game.getPlayers());
-        game = null;
-    }
-
-    private String getCommand() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Available commands:");
-        for (Map.Entry<Integer, String> entry : commands.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-        System.out.print("Enter command number: ");
-        int commandNumber = scanner.nextInt();
-        return commands.getOrDefault(commandNumber, null);
-    }
-
-    private void login() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        for (Player player : game.getPlayers()) {
-            if (player.getUsername().equals(username)) {
-                game.setActivePlayer(player);
-                System.out.println("Welcome back, " + player.getName() + "!");
-            }
-        }
-        if (game.getActivePlayer() == null) {
-            System.out.println("Player does not exist. Creating a new profile...");
-            System.out.print("Enter player name: ");
-            String playerName = scanner.nextLine();
-            Player newPlayer = new Player(playerName, username);
-            game.addNewPlayer(newPlayer);
-            game.setActivePlayer(newPlayer);
-            System.out.println("New player registered with id: " + newPlayer.getUserID());
-        }
-
-        commands.remove(1);
-        commands.put(3, "battle");
-        commands.put(4, "logoff");
-        commands.put(5, "prepare");
-        commands.put(6, "profile");
-    }
-
-    private void profile() {
-        if (game.getActivePlayer() == null) {
-            System.out.println("Please log in first.");
-            return;
-        }
-
-        System.out.println("Player Profile:");
-        System.out.println("Name: " + game.getActivePlayer().getName());
-        System.out.println("Username: " + game.getActivePlayer().getUsername());
-        System.out.println("GoldCoins: " + game.getActivePlayer().getGoldCoins());
-        System.out.println("Xp: " + game.getActivePlayer().getXp());
-
-        System.out.print("Do you want to change your name? (y/n): ");
-        Scanner scanner = new Scanner(System.in);
-        String response = scanner.nextLine().trim().toLowerCase();
-        if (response.equals("y")) {
-            System.out.print("Enter a new name: ");
-            String newName = scanner.nextLine().trim();
-            game.getActivePlayer().setName(newName);
-            System.out.println("Name updated successfully!");
-        } else {
-            System.out.println("No changes made to the profile.");
-        }
-    }
-
-    private void prepare() {
-        if (game.getActivePlayer() == null) {
-            System.out.println("Please log in first.");
-            return;
-        }
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Prepare Menu:");
-        System.out.println("1. Buy Character");
-        System.out.println("2. Buy Equipment");
-        System.out.println("3. Sell Character");
-        System.out.println("4. Sell Equipment");
-        System.out.println("5. Exit Prepare Menu");
-
-        System.out.print("Enter command number: ");
-        int choice = scanner.nextInt();
-        
-        // TODO: complete the switch in prepare. Might want to change to use getCommand
-        throw new NotImplementedException();
-        switch (choice) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                System.out.println("Exiting Prepare Menu.");
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-                break;
-        }
-    }
-
-    private void battle() {
-        // TODO: implement battle in Cli
-        // Must call game.findOpponent() until user is satisfied.
-        // Then call game.battle() and print battle records
-        throw new NotImplementedException();
-    }
-
-    private void logoff() {
-        game.setActivePlayer(null);
-        game.clearOpponent();
-        System.out.println("Logged off.");
-
-        commands.put(1, "login");
-        commands.remove(3);
-        commands.remove(4);
-        commands.remove(5);
-        commands.remove(6);
+        System.out.println(banner);
     }
 
     private ArrayList<Player> retrievePlayers() {
