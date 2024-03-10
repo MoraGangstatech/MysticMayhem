@@ -197,8 +197,7 @@ public abstract class Character implements Serializable {
     }
 
     public void restore() {
-        // TODO: implement restore for Character
-        throw new NotImplementedException();
+        this.currentHealth = this.baseHealth;
     }
 
 }

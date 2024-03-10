@@ -106,7 +106,6 @@ public class Cli {
         System.out.print("Do you want to change your name? (y/n): ");
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine().trim().toLowerCase();
-
         if (response.equals("y")) {
             System.out.print("Enter a new name: ");
             String newName = scanner.nextLine().trim();
@@ -118,10 +117,43 @@ public class Cli {
     }
 
     private void prepare() {
-        // TODO: implement prepare
-        // Allows players to buy/sell equipments and modify their armies.
-        // Directly update using player methods
-        throw new NotImplementedException();
+        if (game.getActivePlayer() == null) {
+            System.out.println("Please log in first.");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Prepare Menu:");
+        System.out.println("1. Buy Character");
+        System.out.println("2. Buy Equipment");
+        System.out.println("3. Sell Character");
+        System.out.println("4. Sell Equipment");
+        System.out.println("5. Exit Prepare Menu");
+
+        System.out.print("Enter command number: ");
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+//                buyCharacter();
+                break;
+            case 2:
+//                buyEquipment();
+                break;
+            case 3:
+//                sellCharacter();
+                break;
+            case 4:
+//                sellEquipment();
+                break;
+            case 5:
+                System.out.println("Exiting Prepare Menu.");
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                break;
+        }
     }
 
     private void battle() {
