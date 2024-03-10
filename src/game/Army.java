@@ -71,13 +71,16 @@ public class Army implements Serializable {
     }
 
     public Character getLowestHealthCharacter(HomeGround ground) {
-        Character lowestHealthCharacter = characters.get(0);
+        Character lowestHealthCharacter = null;
         for (Character character : characters) {
-            if (character.getCurrentHealth() < lowestHealthCharacter.getCurrentHealth()) {
+            if(character.getCurrentHealth() == 0){ // check whether the character is dead.
+                continue;
+            }
+            if (lowestHealthCharacter == null ||character.getCurrentHealth() < lowestHealthCharacter.getCurrentHealth()) {
                 lowestHealthCharacter = character;
             }
         }
-        return lowestHealthCharacter;
+        return lowestHealthCharacter; // if this function return null, then all characters are dead.
     }
 
     public ArrayList<PartialBattleRecord> battle(Army enemyArmy, HomeGround ground) {
