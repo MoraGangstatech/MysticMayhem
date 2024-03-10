@@ -11,19 +11,18 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Cli {
-    private final Game game;
+    private Game game;
     private final Map<Integer, String> commands;
     private final String playersFile = "players.ser";
 
     public Cli() {
-        game = new Game(retrievePlayers());
         commands = new HashMap<>();
         commands.put(1, "login");
         commands.put(2, "exit");
-//        storePlayers(game.getPlayers());
     }
 
     public void begin() {
+        game = new Game(retrievePlayers());
         boolean exit = false;
         while (!exit) {
             switch (getCommand()) {
@@ -49,6 +48,8 @@ public class Cli {
                     System.out.println("Invalid command!");
             }
         }
+        storePlayers(game.getPlayers());
+        game = null;
     }
 
     private String getCommand() {
@@ -79,7 +80,6 @@ public class Cli {
             Player newPlayer = new Player(playerName, username);
             game.addNewPlayer(newPlayer);
             game.setActivePlayer(newPlayer);
-            storePlayers(game.getPlayers());
             System.out.println("New player registered with id: " + newPlayer.getUserID());
         }
 
@@ -101,7 +101,6 @@ public class Cli {
         System.out.println("Username: " + game.getActivePlayer().getUsername());
         System.out.println("GoldCoins: " + game.getActivePlayer().getGoldCoins());
         System.out.println("Xp: " + game.getActivePlayer().getXp());
-//        System.out.println("Army: " + game.getActivePlayer().getArmy());
 
         System.out.print("Do you want to change your name? (y/n): ");
         Scanner scanner = new Scanner(System.in);
@@ -133,19 +132,17 @@ public class Cli {
 
         System.out.print("Enter command number: ");
         int choice = scanner.nextInt();
-
+        
+        // TODO: complete the switch in prepare. Might want to change to use getCommand
+        throw new NotImplementedException();
         switch (choice) {
             case 1:
-//                buyCharacter();
                 break;
             case 2:
-//                buyEquipment();
                 break;
             case 3:
-//                sellCharacter();
                 break;
             case 4:
-//                sellEquipment();
                 break;
             case 5:
                 System.out.println("Exiting Prepare Menu.");
