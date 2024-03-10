@@ -42,9 +42,13 @@ public class Army implements Serializable {
     public Character getAttacker(HomeGround ground) {
         Character attacker = characters.get(0);
         for (Character character : characters) {
-            if (character.getSpeed(ground) >= attacker.getSpeed(ground)) {
-                if (character.getAttackPriority() < attacker.getAttackPriority()) continue;
+            if (character.getSpeed(ground) > attacker.getSpeed(ground)) { // getting Character with the highest speed
                 attacker = character;
+            }
+            else if (character.getSpeed(ground) == attacker.getSpeed(ground)) { // getting Characters has same speed then attaker will be selected base on priority
+                if (character.getAttackPriority() > attacker.getAttackPriority()){
+                    attacker = character;
+                }
             }
         }
         return attacker;
@@ -54,9 +58,13 @@ public class Army implements Serializable {
     public Character getDefender(HomeGround ground) {
         Character defender = characters.get(0);
         for (Character character : characters) {
-            if (character.getDefense(ground) <= defender.getDefense(ground)) {
-                if (character.getDefendPriority() < defender.getDefendPriority()) continue;
+            if (character.getDefense(ground) < defender.getDefense(ground)) { // getting Character with the lowest defence
                 defender = character;
+            }
+            else if (character.getDefense(ground) == defender.getDefense(ground)){// getting Characters has same defence then defender will be selected base on priority
+                if (character.getDefendPriority() > defender.getDefendPriority()){
+                    defender = character;
+                }
             }
         }
         return defender;

@@ -11,19 +11,18 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Cli {
-    private final Game game;
+    private Game game;
     private final Map<Integer, String> commands;
     private final String playersFile = "players.ser";
 
     public Cli() {
-        game = new Game(retrievePlayers());
         commands = new HashMap<>();
         commands.put(1, "login");
         commands.put(2, "exit");
-        storePlayers(game.getPlayers());
     }
 
     public void begin() {
+        game = new Game(retrievePlayers());
         boolean exit = false;
         while (!exit) {
             switch (getCommand()) {
@@ -49,6 +48,8 @@ public class Cli {
                     System.out.println("Invalid command!");
             }
         }
+        storePlayers(game.getPlayers());
+        game = null;
     }
 
     private String getCommand() {
@@ -100,12 +101,10 @@ public class Cli {
         System.out.println("Username: " + game.getActivePlayer().getUsername());
         System.out.println("GoldCoins: " + game.getActivePlayer().getGoldCoins());
         System.out.println("Xp: " + game.getActivePlayer().getXp());
-//        System.out.println("Army: " + game.getActivePlayer().getArmy());
 
         System.out.print("Do you want to change your name? (y/n): ");
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine().trim().toLowerCase();
-
         if (response.equals("y")) {
             System.out.print("Enter a new name: ");
             String newName = scanner.nextLine().trim();
@@ -117,10 +116,41 @@ public class Cli {
     }
 
     private void prepare() {
-        // TODO: implement prepare
-        // Allows players to buy/sell equipments and modify their armies.
-        // Directly update using player methods
+        if (game.getActivePlayer() == null) {
+            System.out.println("Please log in first.");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Prepare Menu:");
+        System.out.println("1. Buy Character");
+        System.out.println("2. Buy Equipment");
+        System.out.println("3. Sell Character");
+        System.out.println("4. Sell Equipment");
+        System.out.println("5. Exit Prepare Menu");
+
+        System.out.print("Enter command number: ");
+        int choice = scanner.nextInt();
+        
+        // TODO: complete the switch in prepare. Might want to change to use getCommand
         throw new NotImplementedException();
+        switch (choice) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                System.out.println("Exiting Prepare Menu.");
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                break;
+        }
     }
 
     private void battle() {
