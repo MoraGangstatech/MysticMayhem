@@ -7,21 +7,24 @@ import java.io.Serializable;
 public class BattleRecord implements Serializable {
 
     private final int turnNo;
+
     private final Player player;
 
     private final Character attacker;
 
     private final Character defender;
+
     private final double attackerHealth;
+
     private final double defenderHealth;
 
-    public BattleRecord(int turnNo, Player player, Character attacker, Character defender) {
+    public BattleRecord(int turnNo, Player player, Character attacker, Character defender, double attackerHealth, double defenderHealth) {
         this.turnNo = turnNo;
         this.player = player;
         this.attacker = attacker;
         this.defender = defender;
-        this.attackerHealth = attacker.getCurrentHealth();
-        this.defenderHealth = defender.getCurrentHealth();
+        this.attackerHealth = attackerHealth;
+        this.defenderHealth = defenderHealth;
     }
 
     @Override
@@ -39,3 +42,4 @@ public class BattleRecord implements Serializable {
         return str;
     }
 }
+
