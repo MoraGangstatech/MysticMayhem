@@ -13,10 +13,10 @@ public class Profile extends CliFunction {
     @Override
     public void call(Game game) {
         System.out.println("Player Profile:");
-        System.out.println("Name: " + game.getActivePlayer().getName());
-        System.out.println("Username: " + game.getActivePlayer().getUsername());
-        System.out.println("GoldCoins: " + game.getActivePlayer().getGoldCoins());
-        System.out.println("Xp: " + game.getActivePlayer().getXp());
+        System.out.println("Name        : " + game.getActivePlayer().getName());
+        System.out.println("Username    : " + game.getActivePlayer().getUsername());
+        System.out.println("GoldCoins   : " + game.getActivePlayer().getGoldCoins());
+        System.out.println("Xp          : " + game.getActivePlayer().getXp());
 
         System.out.print("Do you want to change your name? (y/n): ");
         Scanner scanner = new Scanner(System.in);
