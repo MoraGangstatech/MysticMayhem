@@ -31,7 +31,7 @@ public class Game {
     }
 
     public void addNewPlayer(Player player) {
-        if (players.stream().anyMatch(p -> p.getUsername() == player.getUsername())) {
+        if (players.stream().anyMatch(p -> p.getUsername().equals(player.getUsername()))) {
             throw new RuntimeException("Player with the same username already exists.");
         }
         else {

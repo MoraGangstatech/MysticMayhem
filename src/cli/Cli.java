@@ -20,7 +20,7 @@ public class Cli {
         commands = new HashMap<>();
         commands.put(1, "login");
         commands.put(2, "exit");
-        storePlayers(game.getPlayers());
+//        storePlayers(game.getPlayers());
     }
 
     public void begin() {
@@ -79,6 +79,7 @@ public class Cli {
             Player newPlayer = new Player(playerName, username);
             game.addNewPlayer(newPlayer);
             game.setActivePlayer(newPlayer);
+            storePlayers(game.getPlayers());
             System.out.println("New player registered with id: " + newPlayer.getUserID());
         }
 
