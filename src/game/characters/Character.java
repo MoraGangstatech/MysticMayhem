@@ -1,6 +1,5 @@
 package game.characters;
 
-import exeptions.NotImplementedException;
 import game.Army;
 import game.HomeGround;
 import game.PartialBattleRecord;
@@ -14,6 +13,7 @@ import java.util.Objects;
 
 public abstract class Character implements Serializable {
     private final String name;
+    private final Type type;
     private final Category category;
     protected Player owner;
     private double price;
@@ -29,9 +29,10 @@ public abstract class Character implements Serializable {
     private int defendPriority;
 
 
-    public Character(Player owner, String name, Category category, double price, int baseAttack, int baseDefense, double baseHealth, int baseSpeed, int attackPriority, int defendPriority) {
+    public Character(Player owner, String name, Type type, Category category, double price, int baseAttack, int baseDefense, double baseHealth, int baseSpeed, int attackPriority, int defendPriority) {
         this.owner = owner;
         this.name = name;
+        this.type = type;
         this.category = category;
         this.price = price;
         this.baseAttack = baseAttack;
@@ -221,4 +222,7 @@ public abstract class Character implements Serializable {
         this.currentHealth = this.baseHealth;
     }
 
+    public Type getType() {
+        return type;
+    }
 }
