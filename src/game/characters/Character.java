@@ -2,8 +2,8 @@ package game.characters;
 
 import exeptions.NotImplementedException;
 import game.Army;
-import game.BattleRecord;
 import game.HomeGround;
+import game.PartialBattleRecord;
 import game.Player;
 import game.equipments.Equipment;
 import game.exeptions.DuplicateEquipmentException;
@@ -58,14 +58,11 @@ public abstract class Character implements Serializable {
         int attack = baseAttack;
         if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
             attack += 1;
-        }
-        else if (category == Category.Sunchildren && ground == HomeGround.Marshland) {
+        } else if (category == Category.Sunchildren && ground == HomeGround.Marshland) {
             attack -= 1;
-        }
-        else if (category == Category.Sunchildren && ground == HomeGround.Desert) {
+        } else if (category == Category.Sunchildren && ground == HomeGround.Desert) {
             attack += 1;
-        }
-        else if (category == Category.Mystics && ground == HomeGround.Arcane) {
+        } else if (category == Category.Mystics && ground == HomeGround.Arcane) {
             attack += 2;
         }
         return attack;
@@ -75,14 +72,11 @@ public abstract class Character implements Serializable {
         int defense = baseDefense;
         if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
             defense += 1;
-        }
-        else if (category == Category.Marshlanders && ground == HomeGround.Marshland) {
+        } else if (category == Category.Marshlanders && ground == HomeGround.Marshland) {
             defense += 2;
-        }
-        else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
+        } else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
             defense -= 1;
-        }
-        else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
+        } else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
             defense -= 1;
         }
         return defense;
@@ -96,26 +90,41 @@ public abstract class Character implements Serializable {
         return previousHealth;
     }
 
-    public void takeDamage(int amount, HomeGround ground) {
-        // TODO: implement takeDamage based on the ground and category. update previousHealth
-        throw new NotImplementedException();
+    public void takeDamage(double amount, HomeGround ground) {
+        double healthReduction = 0.5 * amount - 0.1 * getDefense(ground);
+        if (healthReduction > 0) currentHealth -= healthReduction;
+        if (currentHealth > 0) {
+            takeGroundEffectOnHealth(ground, false);
+        }
+        if (currentHealth < 0) currentHealth = 0;
+    }
+
+    public void takeHeal(double amount, HomeGround ground) {
+        currentHealth += 0.1 * amount;
+        if (currentHealth > 0) {
+            takeGroundEffectOnHealth(ground, false);
+        }
+        if (currentHealth < 0) currentHealth = 0;
+    }
+
+    void takeGroundEffectOnHealth(HomeGround ground, boolean isAttacker) {
+        if (category == Category.Marshlanders && ground == HomeGround.Desert) currentHealth -= 1;
+        if (isAttacker) {
+            if (category == Category.Mystics && ground == HomeGround.Arcane) currentHealth *= 1.1;
+        }
     }
 
     public int getSpeed(HomeGround ground) {
         int speed = baseSpeed;
         if (category == Category.Marshlanders && ground == HomeGround.Hillcrest) {
             speed -= 1;
-        }
-        else if (category == Category.Sunchildren && ground == HomeGround.Hillcrest) {
+        } else if (category == Category.Sunchildren && ground == HomeGround.Hillcrest) {
             speed -= 1;
-        }
-        else if (category == Category.Mystics && ground == HomeGround.Marshland) {
+        } else if (category == Category.Mystics && ground == HomeGround.Marshland) {
             speed -= 1;
-        }
-        else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
+        } else if (category == Category.Highlanders && ground == HomeGround.Arcane) {
             speed -= 1;
-        }
-        else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
+        } else if (category == Category.Marshlanders && ground == HomeGround.Arcane) {
             speed -= 1;
         }
         return speed;
@@ -185,15 +194,27 @@ public abstract class Character implements Serializable {
         return defendPriority;
     }
 
-    public double additionalTurnDamageMultiplier(HomeGround ground) {
-        // TODO: implement additionalTurnDamageMultiplier. return 0 if not eligible for an additional turn
-        throw new NotImplementedException();
+    public double getAdditionalTurnDamageMultiplier(HomeGround ground) {
+        if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
+            return 0.2;
+        }
+        return 0;
     }
 
-    public ArrayList<BattleRecord> engage(Army freiendlyArmy, Army enemyArmy, HomeGround ground) {
-        // TODO: implement engage based on the ground, category and additionalTurnDamageMultiplier for non-healers.
-        this.takeDamage(0, ground); // attacker might take damage based on the ground
-        throw new NotImplementedException();
+    public ArrayList<PartialBattleRecord> engage(Army freiendlyArmy, Army enemyArmy, HomeGround ground) {
+        ArrayList<PartialBattleRecord> battleRecords = new ArrayList<>();
+        Character defender = enemyArmy.getDefender(ground);
+        defender.takeDamage(this.getAttack(ground), ground);
+        this.takeGroundEffectOnHealth(ground, true);
+        battleRecords.add(new PartialBattleRecord(this, defender, this.getCurrentHealth(), defender.getCurrentHealth()));
+        if (this.getCurrentHealth() > 0) {
+            double damageMultiplier = this.getAdditionalTurnDamageMultiplier(ground);
+            defender = enemyArmy.getDefender(ground);
+            defender.takeDamage(this.getAttack(ground) * damageMultiplier, ground);
+            this.takeGroundEffectOnHealth(ground, true);
+            battleRecords.add(new PartialBattleRecord(this, defender, this.getCurrentHealth(), defender.getCurrentHealth()));
+        }
+        return battleRecords;
     }
 
     public void restore() {

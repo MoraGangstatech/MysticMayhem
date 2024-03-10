@@ -80,7 +80,7 @@ public class Army implements Serializable {
         return lowestHealthCharacter;
     }
 
-    public ArrayList<BattleRecord> battle(Army enemyArmy, HomeGround ground) {
+    public ArrayList<PartialBattleRecord> battle(Army enemyArmy, HomeGround ground) {
         return getAttacker(ground).engage(this, enemyArmy, ground);
     }
 
