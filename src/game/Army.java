@@ -22,8 +22,7 @@ public class Army implements Serializable {
     public void insertCharacter(Character character) {
         if (characters.contains(character)) {
             throw new InvalidCharacterException();
-        }
-        else{
+        } else {
             characters.add(character);
         }
 
@@ -32,52 +31,58 @@ public class Army implements Serializable {
     public void removeCharacter(Character character) {
         if (!characters.contains(character)) {
             throw new InvalidCharacterException();
-        }
-        else{
+        } else {
             characters.remove(character);
         }
 
     }
 
     public Character getAttacker(HomeGround ground) {
-        Character attacker = characters.get(0);
+        Character attacker = null;
         for (Character character : characters) {
-            if (character.getSpeed(ground) > attacker.getSpeed(ground)) { // getting Character with the highest speed
-                attacker = character;
+            if (character.getCurrentHealth() == 0) { // check whether the character is dead.
+                continue;
             }
-            else if (character.getSpeed(ground) == attacker.getSpeed(ground)) { // getting Characters has same speed then attaker will be selected base on priority
-                if (character.getAttackPriority() > attacker.getAttackPriority()){
+            if (attacker == null || character.getSpeed(ground) > attacker.getSpeed(ground)) { // getting Character with the highest speed
+                attacker = character;
+            } else if (character.getSpeed(ground) == attacker.getSpeed(ground)) { // getting Characters has same speed then attaker will be selected base on priority
+                if (character.getAttackPriority() > attacker.getAttackPriority()) {
                     attacker = character;
                 }
             }
         }
-        return attacker;
+        return attacker; // if this function return null, then all characters are dead.
 
     }
 
     public Character getDefender(HomeGround ground) {
-        Character defender = characters.get(0);
+        Character defender = null;
         for (Character character : characters) {
-            if (character.getDefense(ground) < defender.getDefense(ground)) { // getting Character with the lowest defence
-                defender = character;
+            if (character.getCurrentHealth() == 0) { // check whether the character is dead.
+                continue;
             }
-            else if (character.getDefense(ground) == defender.getDefense(ground)){// getting Characters has same defence then defender will be selected base on priority
-                if (character.getDefendPriority() > defender.getDefendPriority()){
+            if (defender == null || character.getDefense(ground) < defender.getDefense(ground)) { // getting Character with the lowest defence
+                defender = character;
+            } else if (character.getDefense(ground) == defender.getDefense(ground)) {// getting Characters has same defence then defender will be selected base on priority
+                if (character.getDefendPriority() > defender.getDefendPriority()) {
                     defender = character;
                 }
             }
         }
-        return defender;
+        return defender; // if this function return null, then all characters are dead.
     }
 
     public Character getLowestHealthCharacter(HomeGround ground) {
-        Character lowestHealthCharacter = characters.get(0);
+        Character lowestHealthCharacter = null;
         for (Character character : characters) {
-            if (character.getCurrentHealth() < lowestHealthCharacter.getCurrentHealth()) {
+            if (character.getCurrentHealth() == 0) { // check whether the character is dead.
+                continue;
+            }
+            if (lowestHealthCharacter == null || character.getCurrentHealth() < lowestHealthCharacter.getCurrentHealth()) {
                 lowestHealthCharacter = character;
             }
         }
-        return lowestHealthCharacter;
+        return lowestHealthCharacter; // if this function return null, then all characters are dead.
     }
 
     public ArrayList<PartialBattleRecord> battle(Army enemyArmy, HomeGround ground) {
