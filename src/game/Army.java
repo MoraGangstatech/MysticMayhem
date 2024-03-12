@@ -20,11 +20,12 @@ public class Army implements Serializable {
     }
 
     public void insertCharacter(Character character) {
-        if (characters.contains(character)) {
-            throw new InvalidCharacterException();
-        } else {
-            characters.add(character);
+        for (Character includedCharacter : characters) {
+            if (character.getType() == includedCharacter.getType())
+                throw new InvalidCharacterException();
         }
+        characters.add(character);
+
 
     }
 
