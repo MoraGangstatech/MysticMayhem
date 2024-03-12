@@ -6,8 +6,8 @@ import cli.functions.Logoff;
 import cli.functions.Profile;
 import cli.functions.prepare.BuyCharacter;
 import cli.functions.prepare.BuyEquipment;
+import cli.functions.prepare.DiscardEquipment;
 import cli.functions.prepare.SellCharacter;
-import cli.functions.prepare.SellEquipment;
 import game.Game;
 import game.Player;
 
@@ -52,7 +52,7 @@ public class Cli {
                                         new BuyCharacter(),
                                         new SellCharacter(),
                                         new BuyEquipment(),
-                                        new SellEquipment()
+                                        new DiscardEquipment()
                                 }
                         ),
                         new Battle(),
