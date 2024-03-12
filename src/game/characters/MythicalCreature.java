@@ -7,33 +7,3 @@ public abstract class MythicalCreature extends Character {
         super(owner, name, Type.MythicalCreature, category, price, attack, defense, health, speed, 3, 2);
     }
 }
-
-class Dragon extends MythicalCreature {
-    public Dragon(Player owner) {
-        super(owner, "Dragon", Category.Sunchildren, 120, 12, 14, 15, 8);
-    }
-}
-
-class Basilisk extends MythicalCreature {
-    public Basilisk(Player owner) {
-        super(owner, "Basilisk", Category.Marshlanders, 165, 15, 11, 10, 12);
-    }
-}
-
-class Hydra extends MythicalCreature {
-    public Hydra(Player owner) {
-        super(owner, "Hydra", Category.Marshlanders, 205, 12, 16, 10, 11);
-    }
-}
-
-class Phoenix extends MythicalCreature {
-    public Phoenix(Player owner) {
-        super(owner, "Phoenix", Category.Sunchildren, 275, 17, 13, 17, 19);
-    }
-}
-
-class Pegasus extends MythicalCreature {
-    public Pegasus(Player owner) {
-        super(owner, "Pegasus", Category.Mystics, 340, 14, 18, 20, 20);
-    }
-}
