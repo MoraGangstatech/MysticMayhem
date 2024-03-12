@@ -48,4 +48,14 @@ public abstract class Equipment implements Serializable {
     public int getSpeedModifier() {
         return speedModifier;
     }
+
+    @Override
+    public String toString() {
+        String str = String.format("%s(%s) | %dgc", name, equipmentType.name(), price);
+        if (attackModifier != 0) str += String.format(" | attack: %+d", attackModifier);
+        if (defenseModifier != 0) str += String.format(" | defence: %+d", defenseModifier);
+        if (healthModifier != 0) str += String.format(" | health: %+d", healthModifier);
+        if (speedModifier != 0) str += String.format(" | speed: %+d", speedModifier);
+        return str;
+    }
 }
