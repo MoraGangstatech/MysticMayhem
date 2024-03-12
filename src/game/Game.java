@@ -47,15 +47,25 @@ public class Game {
         throw new NotImplementedException();
     }
 
+    public void setcurrentOpponent(Player currentOpponent){
+        this.currentOpponent = currentOpponent;
+    }
+
     public Player findOpponent() {
-        int previousOpponentID = currentOpponent.getUserID();
+        int previousOpponentID;
+        if(currentOpponent == null) {
+            previousOpponentID = -1;
+        }
+        else{
+            previousOpponentID = currentOpponent.getUserID();
+        }
         currentOpponent = null;
         int playerCount = players.size();
-        if (playerCount > 2) {
+        if (playerCount >= 2) {
             while (currentOpponent == null) {
-                currentOpponent = players.get(randomGen.nextInt() % playerCount);
-                if (currentOpponent.getUserID() == previousOpponentID || currentOpponent.getUserID() == activePlayer.getUserID()) {
-                    currentOpponent = null;
+                Player potentialOpponent = players.get(randomGen.nextInt(playerCount));
+                if (potentialOpponent.getUserID() != previousOpponentID && potentialOpponent.getUserID() != activePlayer.getUserID()) {
+                    currentOpponent = potentialOpponent;
                 }
             }
         }
