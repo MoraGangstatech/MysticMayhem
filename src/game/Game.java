@@ -41,7 +41,7 @@ public class Game {
 
     public ArrayList<BattleRecord> battle() {
         // TODO: implement battle in Game.
-        // count turns, call battle method of the respective armies, and, track the winner.
+        // count turns, call engage method of the respective armies, and, track the winner.
         // update xp & gold after the battle.
         // restore both armies
         throw new NotImplementedException();

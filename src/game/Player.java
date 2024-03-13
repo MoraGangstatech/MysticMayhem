@@ -25,7 +25,7 @@ public class Player implements Serializable {
         this.username = username;
         this.xp = 0;
         this.goldCoins = 500;
-        this.army = new Army(this);
+        this.army = new Army();
     }
 
     public String getName() {
