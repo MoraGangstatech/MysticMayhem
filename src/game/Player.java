@@ -89,4 +89,12 @@ public class Player implements Serializable {
         goldCoins -= equipment.getPrice();
     }
 
+    public void discardEquipment(EquipmentType equipmentType, Character character) {
+        if (equipmentType == EquipmentType.Armour) {
+            character.discardArmour();
+        } else if (equipmentType == EquipmentType.Artefact) {
+            character.discardArtefact();
+        }
+    }
+
 }

@@ -225,4 +225,16 @@ public abstract class Character implements Serializable {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        String str = String.format("%s(%s)[%s] | %dgc | attack: %d | defence: %d | health: %.1f | speed: %d", name, type.name(), category.name(), (int) price, baseAttack, baseDefense, baseHealth, baseSpeed);
+        if (getArmour() != null) {
+            str += "\n    └─" + getArmour().toString();
+        }
+        if (getArtefact() != null) {
+            str += "\n    └─" + getArtefact().toString();
+        }
+        return str;
+    }
 }
