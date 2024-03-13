@@ -3,13 +3,12 @@ package game.characters;
 import game.Army;
 import game.HomeGround;
 import game.PartialBattleRecord;
-import game.Player;
 
 import java.util.ArrayList;
 
 public abstract class Healer extends Character {
-    public Healer(Player owner, String name, Category category, double price, int attack, int defense, double health, int speed) {
-        super(owner, name, Type.Healer, category, price, attack, defense, health, speed, 5, 1);
+    public Healer(String name, Category category, int price, double attack, double defense, double health, double speed) {
+        super(name, Type.Healer, category, price, attack, defense, health, speed, 5, 1);
     }
 
     @Override

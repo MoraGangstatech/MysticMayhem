@@ -1,11 +1,12 @@
 package game.characters;
 
 import game.Army;
+import game.Helpers;
 import game.HomeGround;
 import game.PartialBattleRecord;
-import game.Player;
 import game.equipments.Equipment;
 import game.exeptions.DuplicateEquipmentException;
+import game.exeptions.NotEnoughGoldException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,22 +16,19 @@ public abstract class Character implements Serializable {
     private final String name;
     private final Type type;
     private final Category category;
-    protected Player owner;
-    private double price;
-    private int baseAttack;
-    private int baseDefense;
+    private final int attackPriority;
+    private final int defendPriority;
+    private int price;
     private double baseHealth;
     private double currentHealth;
-    private double previousHealth;
-    private int baseSpeed;
+    private double baseAttack;
     private Equipment armour;
     private Equipment artefact;
-    private int attackPriority;
-    private int defendPriority;
+    private double baseDefense;
+    private double baseSpeed;
 
 
-    public Character(Player owner, String name, Type type, Category category, double price, int baseAttack, int baseDefense, double baseHealth, int baseSpeed, int attackPriority, int defendPriority) {
-        this.owner = owner;
+    public Character(String name, Type type, Category category, int price, double baseAttack, double baseDefense, double baseHealth, double baseSpeed, int attackPriority, int defendPriority) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -42,7 +40,6 @@ public abstract class Character implements Serializable {
         this.attackPriority = attackPriority;
         this.defendPriority = defendPriority;
         currentHealth = baseHealth;
-        previousHealth = baseHealth;
         armour = null;
         artefact = null;
     }
@@ -51,12 +48,18 @@ public abstract class Character implements Serializable {
         return name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public int getAttack(HomeGround ground) {
-        int attack = baseAttack;
+    private void changePrice(double delta) {
+        delta = Helpers.round(delta, 0);
+        if (price + delta < 0) throw new NotEnoughGoldException();
+        price += (int) delta;
+    }
+
+    public double getAttack(HomeGround ground) {
+        double attack = baseAttack;
         if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
             attack += 1;
         } else if (category == Category.Sunchildren && ground == HomeGround.Marshland) {
@@ -69,8 +72,8 @@ public abstract class Character implements Serializable {
         return attack;
     }
 
-    public int getDefense(HomeGround ground) {
-        int defense = baseDefense;
+    public double getDefense(HomeGround ground) {
+        double defense = baseDefense;
         if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
             defense += 1;
         } else if (category == Category.Marshlanders && ground == HomeGround.Marshland) {
@@ -87,36 +90,33 @@ public abstract class Character implements Serializable {
         return currentHealth;
     }
 
-    public double getPreviousHealth() {
-        return previousHealth;
+    private void changeHealth(double delta) {
+        currentHealth += Helpers.round(delta, 1);
+        if (currentHealth < 0) currentHealth = 0;
+        if (currentHealth > 100) currentHealth = 100;
     }
 
     public void takeDamage(double amount, HomeGround ground) {
         double healthReduction = 0.5 * amount - 0.1 * getDefense(ground);
-        if (healthReduction > 0) currentHealth -= healthReduction;
-        if (currentHealth > 0) {
-            takeGroundEffectOnHealth(ground, false);
-        }
-        if (currentHealth < 0) currentHealth = 0;
+        if (healthReduction > 0) changeHealth(-healthReduction);
+        takeGroundEffectOnHealth(ground, false);
     }
 
     public void takeHeal(double amount, HomeGround ground) {
-        currentHealth += 0.1 * amount;
-        if (currentHealth > 0) {
-            takeGroundEffectOnHealth(ground, false);
-        }
-        if (currentHealth < 0) currentHealth = 0;
+        changeHealth(0.1 * amount);
+        takeGroundEffectOnHealth(ground, false);
     }
 
     void takeGroundEffectOnHealth(HomeGround ground, boolean isAttacker) {
-        if (category == Category.Marshlanders && ground == HomeGround.Desert) currentHealth -= 1;
+        if (currentHealth == 0) return;
+        if (category == Category.Marshlanders && ground == HomeGround.Desert) changeHealth(-1);
         if (isAttacker) {
-            if (category == Category.Mystics && ground == HomeGround.Arcane) currentHealth *= 1.1;
+            if (category == Category.Mystics && ground == HomeGround.Arcane) changeHealth(currentHealth * 0.1);
         }
     }
 
-    public int getSpeed(HomeGround ground) {
-        int speed = baseSpeed;
+    public double getSpeed(HomeGround ground) {
+        double speed = baseSpeed;
         if (category == Category.Marshlanders && ground == HomeGround.Hillcrest) {
             speed -= 1;
         } else if (category == Category.Sunchildren && ground == HomeGround.Hillcrest) {
@@ -141,7 +141,7 @@ public abstract class Character implements Serializable {
         }
         discardArmour();
         this.armour = armour;
-        this.price += armour.getPrice() * (0.2);
+        changePrice(armour.getPrice() * (0.2));
         this.baseAttack += armour.getAttackModifier();
         this.baseDefense += armour.getDefenseModifier();
         this.baseHealth += armour.getHealthModifier();
@@ -150,7 +150,7 @@ public abstract class Character implements Serializable {
 
     public void discardArmour() {
         if (armour != null) {
-            this.price -= armour.getPrice() * (0.2);
+            changePrice(-armour.getPrice() * (0.2));
             this.baseAttack -= armour.getAttackModifier();
             this.baseDefense -= armour.getDefenseModifier();
             this.baseHealth -= armour.getHealthModifier();
@@ -169,7 +169,7 @@ public abstract class Character implements Serializable {
         }
         discardArtefact();
         this.artefact = artefact;
-        this.price += artefact.getPrice() * (0.2);
+        changePrice(artefact.getPrice() * (0.2));
         this.baseAttack += artefact.getAttackModifier();
         this.baseDefense += artefact.getDefenseModifier();
         this.baseHealth += artefact.getHealthModifier();
@@ -178,7 +178,7 @@ public abstract class Character implements Serializable {
 
     public void discardArtefact() {
         if (artefact != null) {
-            this.price -= artefact.getPrice() * (0.2);
+            changePrice(-artefact.getPrice() * (0.2));
             this.baseAttack -= artefact.getAttackModifier();
             this.baseDefense -= artefact.getDefenseModifier();
             this.baseHealth -= artefact.getHealthModifier();
@@ -195,7 +195,7 @@ public abstract class Character implements Serializable {
         return defendPriority;
     }
 
-    public double getAdditionalTurnDamageMultiplier(HomeGround ground) {
+    protected double getAdditionalTurnDamageMultiplier(HomeGround ground) {
         if (category == Category.Highlanders && ground == HomeGround.Hillcrest) {
             return 0.2;
         }
@@ -228,7 +228,7 @@ public abstract class Character implements Serializable {
 
     @Override
     public String toString() {
-        String str = String.format("%s(%s)[%s] | %dgc | attack: %d | defence: %d | health: %.1f | speed: %d", name, type.name(), category.name(), (int) price, baseAttack, baseDefense, baseHealth, baseSpeed);
+        String str = String.format("%s(%s)[%s] | %dgc | attack: %.1f | defence: %.1f | health: %.1f | speed: %.1f", name, type.name(), category.name(), price, baseAttack, baseDefense, baseHealth, baseSpeed);
         if (getArmour() != null) {
             str += "\n    └─" + getArmour().toString();
         }

@@ -1,9 +1,7 @@
 package game.characters;
 
-import game.Player;
-
 public abstract class Mage extends Character {
-    public Mage(Player owner, String name, Category category, double price, int attack, int defense, double health, int speed) {
-        super(owner, name, Type.Mage, category, price, attack, defense, health, speed, 4, 5);
+    public Mage(String name, Category category, int price, double attack, double defense, double health, double speed) {
+        super(name, Type.Mage, category, price, attack, defense, health, speed, 4, 5);
     }
 }
