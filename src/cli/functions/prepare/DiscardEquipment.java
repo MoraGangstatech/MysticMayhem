@@ -14,14 +14,14 @@ import java.util.Scanner;
 
 public class DiscardEquipment extends CliFunction {
     public DiscardEquipment() {
-        super("SellEquipment");
+        super("Discard Equipment");
     }
 
     @Override
     public void call(Game game) {
         Player owner = game.getActivePlayer();
+        int startingGoldCoins = (int) owner.getGoldCoins();
         ArrayList<Character> characters = owner.getArmy().getCharacters();
-        System.out.printf("Gold coin balance: %s\n", owner.getGoldCoins());
         System.out.println("Select equipment to sell:");
         ArrayList<AbstractMap.SimpleEntry<Character, EquipmentType>> equipments = new ArrayList<>();
         for (Character character : characters) {
@@ -37,6 +37,7 @@ public class DiscardEquipment extends CliFunction {
             }
         }
         System.out.printf("%d. Cancel\n", equipments.size());
+        System.out.printf("░ Gold coin balance: %s\n", owner.getGoldCoins());
         try {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter equipment number: ");
@@ -45,12 +46,14 @@ public class DiscardEquipment extends CliFunction {
                 Character character = equipments.get(equNumber).getKey();
                 EquipmentType equipmentType = equipments.get(equNumber).getValue();
                 owner.discardEquipment(equipmentType, character);
+                System.out.println("Equipment discarded successfully.");
             } else if (equNumber != characters.size()) {
                 System.out.println("Invalid equipment. No equipment by that number.");
             }
         } catch (InputMismatchException e) {
             System.out.println("Invalid choice. Only enter the choice number (e.g., 1).");
         }
+        System.out.printf("░ Gold coin change: %+d\n", (int) owner.getGoldCoins() - startingGoldCoins);
     }
 }
 

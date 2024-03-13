@@ -19,12 +19,13 @@ import java.util.Scanner;
 
 public class BuyEquipment extends CliFunction {
     public BuyEquipment() {
-        super("BuyEquipment");
+        super("Buy Equipment");
     }
 
     @Override
     public void call(Game game) {
         Player owner = game.getActivePlayer();
+        int startingGoldCoins = (int) owner.getGoldCoins();
         Equipment[] equipments = new Equipment[]{
                 new Chainmail(),
                 new Regalia(),
@@ -34,7 +35,6 @@ public class BuyEquipment extends CliFunction {
                 new Crystal()
         };
         ArrayList<Character> characters = owner.getArmy().getCharacters();
-        System.out.printf("Gold coin balance: %s\n", owner.getGoldCoins());
         try {
             Scanner scanner = new Scanner(System.in);
 
@@ -44,6 +44,7 @@ public class BuyEquipment extends CliFunction {
                 System.out.printf("%d. %s\n", i, equipments[i]);
             }
             System.out.printf("%d. Cancel\n", equipments.length);
+            System.out.printf("░ Gold coin balance: %s\n", owner.getGoldCoins());
             System.out.print("Enter equipment number: ");
             int equNumber = scanner.nextInt();
             if (equNumber >= 0 && equNumber < equipments.length) {
@@ -56,11 +57,12 @@ public class BuyEquipment extends CliFunction {
             }
 
             Character character;
-            System.out.print("Select character to equip:");
+            System.out.println("Select character to equip:");
             for (int i = 0; i < characters.size(); i++) {
                 System.out.printf("%d. %s\n", i, characters.get(i).toString());
             }
             System.out.printf("%d. Cancel\n", characters.size());
+            System.out.printf("░ Gold coin balance: %s\n", owner.getGoldCoins());
             System.out.print("Enter character number: ");
             int charNumber = scanner.nextInt();
             if (charNumber >= 0 && charNumber < characters.size()) {
@@ -73,10 +75,12 @@ public class BuyEquipment extends CliFunction {
             }
 
             owner.buyEquipment(equipment, character);
+            System.out.println("Equipment bought successfully.");
         } catch (InputMismatchException e) {
             System.out.println("Invalid choice. Only enter the choice number (e.g., 1).");
         } catch (NotEnoughGoldException e) {
             System.out.println("Insufficient gold coin balance.");
         }
+        System.out.printf("░ Gold coin change: %+d\n", (int) owner.getGoldCoins() - startingGoldCoins);
     }
 }
