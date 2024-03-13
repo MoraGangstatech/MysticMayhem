@@ -47,9 +47,6 @@ public class Game {
         throw new NotImplementedException();
     }
 
-    public void setcurrentOpponent(Player currentOpponent){
-        this.currentOpponent = currentOpponent;
-    }
 
     public Player findOpponent() {
         int previousOpponentID;
