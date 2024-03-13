@@ -8,10 +8,8 @@ import java.util.ArrayList;
 
 public class Army implements Serializable {
     private final ArrayList<Character> characters;
-    private final Player owner;
 
-    public Army(Player owner) {
-        this.owner = owner;
+    public Army() {
         characters = new ArrayList<>();
     }
 
@@ -21,12 +19,9 @@ public class Army implements Serializable {
 
     public void insertCharacter(Character character) {
         for (Character includedCharacter : characters) {
-            if (character.getType() == includedCharacter.getType())
-                throw new InvalidCharacterException();
+            if (character.getType() == includedCharacter.getType()) throw new InvalidCharacterException();
         }
         characters.add(character);
-
-
     }
 
     public void removeCharacter(Character character) {
@@ -35,7 +30,6 @@ public class Army implements Serializable {
         } else {
             characters.remove(character);
         }
-
     }
 
     public Character getAttacker(HomeGround ground) {
@@ -53,7 +47,6 @@ public class Army implements Serializable {
             }
         }
         return attacker; // if this function return null, then all characters are dead.
-
     }
 
     public Character getDefender(HomeGround ground) {
@@ -86,7 +79,7 @@ public class Army implements Serializable {
         return lowestHealthCharacter; // if this function return null, then all characters are dead.
     }
 
-    public ArrayList<PartialBattleRecord> battle(Army enemyArmy, HomeGround ground) {
+    public ArrayList<PartialBattleRecord> engage(Army enemyArmy, HomeGround ground) {
         return getAttacker(ground).engage(this, enemyArmy, ground);
     }
 

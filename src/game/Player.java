@@ -16,7 +16,7 @@ public class Player implements Serializable {
     private final Army army;
     private String name;
     private int xp;
-    private double goldCoins;
+    private int goldCoins;
     private HomeGround homeGround;
 
     public Player(String name, String username) {
@@ -25,7 +25,7 @@ public class Player implements Serializable {
         this.username = username;
         this.xp = 0;
         this.goldCoins = 500;
-        this.army = new Army(this);
+        this.army = new Army();
     }
 
     public String getName() {
@@ -48,12 +48,18 @@ public class Player implements Serializable {
         return this.xp;
     }
 
-    public void setXp(int xp) {
-        this.xp = xp;
+    public void changeXp(int delta) {
+        this.xp += delta;
     }
 
-    public double getGoldCoins() {
-        return goldCoins;
+    public int getGoldCoins() {
+        return this.goldCoins;
+    }
+
+    public void changeGoldCoins(double delta) {
+        delta = Helpers.round(delta, 0);
+        if (goldCoins + delta < 0) throw new NotEnoughGoldException();
+        goldCoins += (int) delta;
     }
 
     public Army getArmy() {
@@ -71,12 +77,12 @@ public class Player implements Serializable {
     public void buyCharacter(Character character) {
         if (character.getPrice() > goldCoins) throw new NotEnoughGoldException();
         army.insertCharacter(character);
-        goldCoins -= character.getPrice();
+        changeGoldCoins(-character.getPrice());
     }
 
     public void sellCharacter(Character character) {
         army.removeCharacter(character);
-        goldCoins += character.getPrice() * (0.9);
+        changeGoldCoins(character.getPrice() * (0.9));
     }
 
     public void buyEquipment(Equipment equipment, Character character) {
@@ -86,7 +92,7 @@ public class Player implements Serializable {
         } else if (equipment.getType() == EquipmentType.Artefact) {
             character.addArtefact(equipment);
         }
-        goldCoins -= equipment.getPrice();
+        changeGoldCoins(-equipment.getPrice());
     }
 
     public void discardEquipment(EquipmentType equipmentType, Character character) {
