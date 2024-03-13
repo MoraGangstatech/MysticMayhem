@@ -56,7 +56,7 @@ public class Player implements Serializable {
         return this.goldCoins;
     }
 
-    private void changeGoldCoins(double delta) {
+    public void changeGoldCoins(double delta) {
         delta = Helpers.round(delta, 0);
         if (goldCoins + delta < 0) throw new NotEnoughGoldException();
         goldCoins += (int) delta;
